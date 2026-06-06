@@ -4,7 +4,8 @@ This is the challenge set for [LeetGPU.com](https://leetgpu.com). We welcome con
 
 ## Overview
 
-Each challenge includes problem descriptions, reference implementation, test cases, and starter templates for multiple GPU programming frameworks.
+Each challenge includes problem descriptions, reference implementation, test cases,
+and starter templates for CUDA, Triton, and PyTorch/Torch.
 
 ## Challenge Structure
 
@@ -12,7 +13,7 @@ Each challenge contains:
 
 - **`challenge.html`**: Detailed problem description, examples, and constraints
 - **`challenge.py`**: Reference implementation, test cases, and challenge metadata
-- **`starter/`**: Template files for each supported framework
+- **`starter/`**: Template files for CUDA, Triton, and PyTorch/Torch
 
 ## Local Judging
 
@@ -23,7 +24,7 @@ accepts `torch` as an alias for `pytorch`.
 Activate a CUDA-capable PyTorch environment first:
 
 ```bash
-conda activate torch
+conda activate leetgpu
 ```
 
 Quickly judge one challenge by number. `--quick` runs `example,functional`
@@ -63,6 +64,34 @@ fresh results file.
 Some challenges are PyTorch-only. For example, `41_simple_inference` passes a
 `torch.nn.Module` into `solve(...)`, so CUDA/Triton local judging is marked as
 unsupported instead of inventing unusable CUDA/Triton starters.
+
+## Upstream Challenge Sync
+
+Treat `challenges/` as upstream-owned data and keep local tooling outside that
+tree. Sync only the challenge set from an upstream remote:
+
+```bash
+git remote add upstream <upstream-leetgpu-challenges-url>
+python scripts/sync_challenges.py
+```
+
+If the remote is not configured yet, the script can add it for you:
+
+```bash
+python scripts/sync_challenges.py --upstream-url <upstream-leetgpu-challenges-url>
+```
+
+Preview challenge changes without touching files:
+
+```bash
+python scripts/sync_challenges.py --dry-run
+```
+
+The sync keeps the upstream problem definitions and automatically prunes starter
+files outside CUDA, Triton, and PyTorch.
+
+Keep personal solutions under `solutions/` instead of under `challenges/` to
+avoid conflicts during upstream syncs.
 
 Start the local results dashboard:
 

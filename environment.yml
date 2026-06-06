@@ -1,0 +1,17 @@
+name: leetgpu
+channels:
+  - pytorch
+  - nvidia
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pytorch
+  - pytorch-cuda=12.1
+  - pip
+  - pip:
+      - triton
+      - black==24.1.1
+      - flake8==7.0.0
+      - flake8-bugbear
+      - isort==5.13.2
+      - pre-commit

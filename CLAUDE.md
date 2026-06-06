@@ -6,11 +6,8 @@
 challenges/<difficulty>/<number>_<name>/
 ├── challenge.html        # Problem description
 ├── challenge.py          # Reference impl, test cases, metadata
-└── starter/              # One per framework
+└── starter/              # Local judging targets
     ├── starter.cu
-    ├── starter.cute.py
-    ├── starter.jax.py
-    ├── starter.mojo
     ├── starter.pytorch.py
     └── starter.triton.py
 ```
@@ -132,9 +129,6 @@ Must compile/run without errors but not solve the problem. No comments except th
 - CUDA: `challenges/easy/1_vector_add/starter/starter.cu`
 - PyTorch: `challenges/easy/1_vector_add/starter/starter.pytorch.py`
 - Triton: `challenges/easy/1_vector_add/starter/starter.triton.py`
-- JAX: `challenges/easy/1_vector_add/starter/starter.jax.py`
-- CuTe: `challenges/easy/1_vector_add/starter/starter.cute.py`
-- Mojo: `challenges/easy/1_vector_add/starter/starter.mojo`
 
 ### Parameter Description Comment
 
@@ -143,12 +137,10 @@ Each starter file must have exactly one comment describing the parameters, place
 | Framework | Comment template |
 |-----------|-----------------|
 | CUDA | `// <params> are device pointers` |
-| Mojo | `# <params> are device pointers` |
-| PyTorch, Triton, CuTe | `# <params> are tensors on the GPU` |
-| JAX | `# <params> are tensors on GPU` (+ `# return output tensor directly` inside body) |
+| PyTorch, Triton | `# <params> are tensors on the GPU` |
 
 **Rules:**
-- Easy challenges: include the parenthetical `(i.e. pointers to memory on the GPU)` for CUDA/Mojo (matches vector_add reference)
+- Easy challenges: include the parenthetical `(i.e. pointers to memory on the GPU)` for CUDA (matches vector_add reference)
 - Medium/Hard challenges: omit the parenthetical — just `are device pointers`
 - No other comments anywhere in the starter file
 - List only input/output tensor parameter names, not size parameters
@@ -158,25 +150,29 @@ Each starter file must have exactly one comment describing the parameters, place
 1. Create directory: `mkdir -p challenges/<difficulty>/<number>_<name>/starter`
 2. Write `challenge.py` — inherit ChallengeBase, implement all 6 methods
 3. Write `challenge.html` — all 4 sections
-4. Write starter code for all 6 frameworks
+4. Write starter code for CUDA, PyTorch, and Triton
 5. Lint: `pre-commit run --all-files`
 
-## Testing with `run_challenge.py`
+## Local Testing
 
-Use `scripts/run_challenge.py` to submit solutions against the live platform when creating or reviewing challenges. This reads `challenge.py` from the challenge directory and sends it along with the solution.
+This fork does not submit solutions to a remote service. Validate solutions with
+the local judge only:
 
 ```bash
-python scripts/run_challenge.py path/to/challenge_dir --language cuda --action run
+python scripts/judge.py 52 cuda --quick --use-starter
+python scripts/judge.py 52 triton --quick --use-starter
+python scripts/judge.py 52 torch --quick --use-starter
 ```
 
-**Rules:**
-- **GPU**: Always use `--gpu "NVIDIA TESLA T4"` (the default). Do not use any other GPU.
-- **Submission limit**: You may only run this script **5 times per session**. Use submissions carefully — verify your challenge locally (imports, assertions, lint) before submitting.
-- **Workflow**: Write a CUDA solution in `solution/solution.cu`, run the script with `--action run` to validate, and only use `--action submit` when confident. Do not commit the solution file to the PR.
+Keep personal solutions under `solutions/` and pass them with `--solution`:
+
+```bash
+python scripts/local_judge.py challenges/easy/52_silu --language cuda --solution solutions/52_silu/solution.cu
+```
 
 ## Checklist
 
-Verify every item before submitting. This is the single source of truth — workflow prompts reference this section.
+Verify every item before relying on a local challenge.
 
 ### challenge.html
 - [ ] Starts with `<p>` (problem description) — never `<h1>`
@@ -197,10 +193,10 @@ Verify every item before submitting. This is the single source of truth — work
 - [ ] `generate_performance_test` fits 5x in 16GB VRAM (Tesla T4)
 
 ### Starter files
-- [ ] All 6 files present: `.cu`, `.pytorch.py`, `.triton.py`, `.jax.py`, `.cute.py`, `.mojo`
+- [ ] Local starter files present: `.cu`, `.pytorch.py`, `.triton.py`
 - [ ] Exactly 1 parameter description comment per file, no other comments
-- [ ] CUDA/Mojo use "device pointers"; easy challenges include `(i.e. pointers to memory on the GPU)`, medium/hard omit it
-- [ ] Python frameworks use "tensors on the GPU"; JAX also has `# return output tensor directly`
+- [ ] CUDA uses "device pointers"; easy challenges include `(i.e. pointers to memory on the GPU)`, medium/hard omit it
+- [ ] PyTorch and Triton use "tensors on the GPU"
 - [ ] Starters compile/run but do NOT produce correct output
 
 ### General

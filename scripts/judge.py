@@ -15,10 +15,11 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 CHALLENGES_ROOT = REPO_ROOT / "challenges"
 LOCAL_JUDGE = REPO_ROOT / "scripts" / "local_judge.py"
 LOCAL_JUDGE_RESULTS = REPO_ROOT / "local_judge_results.jsonl"
-TORCH_ENV_PYTHONS = (
-    Path("/home/curealb/env/miniconda3/envs/torch/bin/python"),
-    Path("/home/curealb/anaconda3/envs/torch/bin/python"),
-    Path("/home/curealb/miniconda3/envs/torch/bin/python"),
+CONDA_ENV_NAME = "leetgpu"
+CONDA_ENV_PYTHONS = (
+    Path(f"/home/curealb/env/miniconda3/envs/{CONDA_ENV_NAME}/bin/python"),
+    Path(f"/home/curealb/anaconda3/envs/{CONDA_ENV_NAME}/bin/python"),
+    Path(f"/home/curealb/miniconda3/envs/{CONDA_ENV_NAME}/bin/python"),
 )
 LANGUAGE_ALIASES = {
     "cuda": "cuda",
@@ -103,7 +104,7 @@ def judge_python() -> str:
     current = Path(sys.executable)
     if can_import_torch(current):
         return str(current)
-    for candidate in TORCH_ENV_PYTHONS:
+    for candidate in CONDA_ENV_PYTHONS:
         if candidate.exists() and can_import_torch(candidate):
             return str(candidate)
     return str(current)

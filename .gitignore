@@ -69,3 +69,7 @@ env/
 **/*.pyc
 **/*.pyo
 **/*.pyd
+
+# local judge output
+local_judge_results.jsonl
+.local_judge/

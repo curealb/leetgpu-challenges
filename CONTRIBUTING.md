@@ -23,9 +23,7 @@ challenges/<difficulty>/<number>_<name>/
 ├── challenge.py           # Reference implementation and metadata
 └── starter/              # Starter templates
     ├── starter.cu           # CUDA 
-    ├── starter.mojo         # Mojo 
     ├── starter.pytorch.py   # PyTorch 
-    ├── starter.tinygrad.py  # TinyGrad 
     └── starter.triton.py    # Triton 
 ```
 
@@ -84,22 +82,19 @@ sudo apt-get install clang-format
 find challenges -name "*.cu" -o -name "*.cpp" -o -name "*.h" | xargs clang-format -i
 ```
 
-#### Mojo (`.mojo` files)
-- Basic validation checks (file not empty, required imports, `@export` decorator)
-
-The CI will automatically check all code submissions. Fix any linting errors before submitting your PR.
+The CI checks formatting for files that remain in this local fork.
 
 ### Difficulty Levels
 - **Easy**: Single concept, basic kernel launches
 - **Medium**: Multiple concepts, memory optimizations
 - **Hard**: Advanced techniques, complex algorithms
 
-## Submission Process
+## Local Workflow
 
-1. **Fork the repository**
-2. **Create a feature branch**: `git checkout -b challenge/new-challenge-name`
-3. **Add your challenge** with all required files
-5. **Submit a pull request** with a clear description
+1. Add or sync challenges under `challenges/`
+2. Keep personal solutions under `solutions/`
+3. Validate locally with `scripts/judge.py` or `scripts/local_judge.py`
+4. Use `scripts/local_dashboard.py` to inspect local results
 
 ## Getting Help
 
@@ -138,4 +133,3 @@ By submitting code, documentation, or any other content to this repository
 
 4. **Pull Request = Acceptance**  
    Submitting a Pull Request constitutes acceptance of these terms.
-

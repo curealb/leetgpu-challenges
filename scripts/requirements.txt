@@ -1,3 +1,0 @@
-requests
-websocket-client
-torch --index-url https://download.pytorch.org/whl/cpu
