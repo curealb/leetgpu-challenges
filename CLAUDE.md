@@ -6,10 +6,10 @@
 challenges/<difficulty>/<number>_<name>/
 ├── challenge.html        # Problem description
 ├── challenge.py          # Reference impl, test cases, metadata
-└── starter/              # Local judging targets
-    ├── starter.cu
-    ├── starter.pytorch.py
-    └── starter.triton.py
+└── starter/              # Local judging targets for supported languages
+    ├── starter.cu         # Optional: CUDA support
+    ├── starter.pytorch.py # Optional: PyTorch support
+    └── starter.triton.py  # Optional: Triton support
 ```
 
 - **Naming**: `<number>_<challenge_name>` — sequential integer, lowercase with underscores
@@ -55,6 +55,12 @@ No `__init__` — `ChallengeBase` provides one that accepts `device` (default `"
 
 #### `get_solve_signature(self) -> Dict[str, tuple]`
 Maps parameter names to `(ctype, direction)` tuples.
+
+CUDA local judging requires every `ctype` to be `ctypes` compatible: tensor
+pointers such as `ctypes.POINTER(ctypes.c_float)` or scalar ctypes such as
+`ctypes.c_int` and `ctypes.c_size_t`. If any argument uses a Python object type
+or another non-ctypes type, CUDA is marked as `unsupported`. Triton and PyTorch
+starters are not gated by this CUDA compatibility check.
 
 | ctypes | Use for |
 |--------|---------|
@@ -118,9 +124,28 @@ HTML fragment with four required sections:
 
 ## Starter Code
 
-Must compile/run without errors but not solve the problem. No comments except the parameter description comment (e.g., `// A, B, C are device pointers`).
+Starter files declare which languages the local judge can run for a challenge.
+Provide a starter only for each supported local language:
+
+| Language | Starter file |
+|----------|--------------|
+| CUDA | `starter/starter.cu` |
+| PyTorch | `starter/starter.pytorch.py` |
+| Triton | `starter/starter.triton.py` |
+
+If a selected language's starter file is missing, `scripts/local_judge.py`
+records that run as `unsupported`. PyTorch starter files run normally when
+present. Triton starter files run normally when present. CUDA starter files run
+only when present and when `get_solve_signature()` is ctypes compatible.
+
+Starters must compile/run without errors but not solve the problem. No comments
+except the parameter description comment (e.g., `// A, B, C are device pointers`).
 
 **Rules:**
+- Provide all three starters only when the challenge is genuinely supported in
+  CUDA, PyTorch, and Triton.
+- Omit a starter for a language that cannot be represented usefully in that
+  framework; the missing file is the unsupported marker.
 - Easy problems: provide kernel scaffold with grid/block setup
 - Medium/Hard problems: empty `solve` function only
 - Match the exact style of existing starters in each framework
@@ -150,7 +175,7 @@ Each starter file must have exactly one comment describing the parameters, place
 1. Create directory: `mkdir -p challenges/<difficulty>/<number>_<name>/starter`
 2. Write `challenge.py` — inherit ChallengeBase, implement all 6 methods
 3. Write `challenge.html` — all 4 sections
-4. Write starter code for CUDA, PyTorch, and Triton
+4. Write starter code for each supported local language; omit unsupported languages
 5. Lint: `pre-commit run --all-files`
 
 ## Local Testing
@@ -187,8 +212,10 @@ Verify every item before relying on a local challenge.
 - [ ] `generate_performance_test` fits 5x in 16GB VRAM (Tesla T4)
 
 ### Starter files
-- [ ] Local starter files present: `.cu`, `.pytorch.py`, `.triton.py`
-- [ ] Exactly 1 parameter description comment per file, no other comments
+- [ ] Starter files are present for every supported language and omitted for unsupported languages
+- [ ] Missing starter files intentionally mean local judge status `unsupported`
+- [ ] CUDA starters are used only with ctypes-compatible `get_solve_signature()` entries
+- [ ] Exactly 1 parameter description comment per starter file, no other comments
 - [ ] CUDA uses "device pointers"; easy challenges include `(i.e. pointers to memory on the GPU)`, medium/hard omit it
 - [ ] PyTorch and Triton use "tensors on the GPU"
 - [ ] Starters compile/run but do NOT produce correct output

@@ -5,7 +5,7 @@ This is the challenge set for [LeetGPU.com](https://leetgpu.com). We welcome con
 ## Overview
 
 Each challenge includes problem descriptions, reference implementation, test cases,
-and starter templates for CUDA, Triton, and PyTorch/Torch.
+and starter templates for the locally supported languages it can run.
 
 ## Challenge Structure
 
@@ -13,7 +13,7 @@ Each challenge contains:
 
 - **`challenge.html`**: Detailed problem description, examples, and constraints
 - **`challenge.py`**: Reference implementation, test cases, and challenge metadata
-- **`starter/`**: Template files for CUDA, Triton, and PyTorch/Torch
+- **`starter/`**: Template files for supported local judging languages
 
 ## Local Judging
 
@@ -29,7 +29,7 @@ conda activate leetgpu
 
 Quickly judge one challenge by number. `--quick` runs `example,functional`
 instead of `example,functional,performance`. By default, local judging runs the
-challenge starter file (`starter.cu`, `starter.triton.py`, or `starter.pytorch.py`):
+challenge starter file for the selected language:
 
 ```bash
 python scripts/local_judge.py 52 torch --quick
@@ -43,6 +43,20 @@ Run every challenge against starter files for all locally supported languages:
 python scripts/local_judge.py --all --language all --keep-going
 ```
 
+Starter file presence defines local language support for a challenge:
+
+| Language | Required starter |
+|----------|------------------|
+| CUDA | `starter/starter.cu` |
+| Triton | `starter/starter.triton.py` |
+| PyTorch/Torch | `starter/starter.pytorch.py` |
+
+If the selected language's starter file is missing, local judging records the
+run as `unsupported` instead of failing the challenge. CUDA has one additional
+requirement: every solve signature type from `challenge.py` must be compatible
+with `ctypes`. Triton and PyTorch do not use the CUDA `ctypes` signature gate;
+if their starter file exists, the local judge loads and runs it normally.
+
 Use `--overwrite` when you want a fresh results file instead of appending:
 
 ```bash
@@ -54,8 +68,9 @@ metadata and snapshots stored under `.local_judge/code/`. Use `--overwrite` for 
 fresh results file.
 
 Some challenges are PyTorch-only. For example, `41_simple_inference` passes a
-`torch.nn.Module` into `solve(...)`, so CUDA/Triton local judging is marked as
-unsupported instead of inventing unusable CUDA/Triton starters.
+`torch.nn.Module` into `solve(...)`, so CUDA local judging is marked as
+unsupported because the signature is not `ctypes` compatible. Languages without
+a matching starter file are also marked as unsupported.
 
 ## Upstream Challenge Sync
 

@@ -297,6 +297,24 @@ def unsupported_cuda_signature_reason(challenge: Any) -> str | None:
     )
 
 
+def missing_starter_reason(language: str, solution_path: Path) -> str | None:
+    if solution_path.exists():
+        return None
+    return (
+        f"{language} local judging is unsupported for this challenge because "
+        f"{solution_path.name} does not exist."
+    )
+
+
+def unsupported_language_reason(language: str, solution_path: Path, challenge: Any) -> str | None:
+    missing_reason = missing_starter_reason(language, solution_path)
+    if missing_reason is not None:
+        return missing_reason
+    if language == "cuda":
+        return unsupported_cuda_signature_reason(challenge)
+    return None
+
+
 def run_solve(solution: CompiledSolution, challenge: Any, case: dict[str, Any]) -> None:
     if solution.kind == "cuda":
         solution.solve(*ctypes_args_for_case(challenge, case))
@@ -653,33 +671,27 @@ def main() -> int:
                 print(f"\n== {rel} [{language}] ==")
 
                 try:
-                    challenge = load_challenge(challenge_dir)
-                    if language == "cuda":
-                        reason = unsupported_cuda_signature_reason(challenge)
-                        if reason is not None:
-                            rows.append(
-                                unsupported_row(
-                                    run_id,
-                                    run_started_at,
-                                    rel,
-                                    challenge,
-                                    language,
-                                    solution_path,
-                                    code_meta,
-                                    reason,
-                                )
+                    challenge = None
+                    reason = missing_starter_reason(language, solution_path)
+                    if reason is not None:
+                        rows.append(
+                            unsupported_row(
+                                run_id,
+                                run_started_at,
+                                rel,
+                                challenge,
+                                language,
+                                solution_path,
+                                code_meta,
+                                reason,
                             )
-                            print(f"unsupported: {reason}")
-                            continue
-                    if (
-                        language == "triton"
-                        and not solution_path.exists()
-                        and unsupported_cuda_signature_reason(challenge) is not None
-                    ):
-                        reason = (
-                            "Triton local judging skipped because no Triton starter file "
-                            "exists for this challenge."
                         )
+                        print(f"unsupported: {reason}")
+                        continue
+
+                    challenge = load_challenge(challenge_dir)
+                    reason = unsupported_language_reason(language, solution_path, challenge)
+                    if reason is not None:
                         rows.append(
                             unsupported_row(
                                 run_id,
@@ -701,7 +713,7 @@ def main() -> int:
                         run_id,
                         run_started_at,
                         rel,
-                        locals().get("challenge"),
+                        challenge,
                         language,
                         solution_path,
                         code_meta,
