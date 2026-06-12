@@ -97,6 +97,56 @@ python scripts/sync_challenges.py --dry-run
 The sync keeps the upstream problem definitions and automatically prunes starter
 files outside CUDA, Triton, and PyTorch.
 
+## Branch Workflow
+
+Use `main` only for syncing upstream challenge updates, and use `solution` for
+personal solutions, local judging, and solution commits.
+
+Sync upstream challenges into `main`:
+
+```bash
+git switch main
+git fetch upstream
+git merge --ff-only upstream/main
+git push origin main
+```
+
+Bring the latest challenges into `solution` before solving:
+
+```bash
+git switch solution
+git rebase main
+```
+
+If you prefer merge commits over rebasing, use this instead:
+
+```bash
+git switch solution
+git merge main
+```
+
+Write, judge, and commit solutions on `solution`:
+
+```bash
+git add .
+git commit -m "solve <challenge-name>"
+git push -u origin solution
+```
+
+If `solution` is already pushed and you rebased it, update the remote branch
+safely:
+
+```bash
+git push --force-with-lease origin solution
+```
+
+To avoid accidentally pushing to the upstream challenge repository, disable
+pushes to the `upstream` remote:
+
+```bash
+git remote set-url --push upstream DISABLED
+```
+
 Start the local results dashboard:
 
 ```bash
