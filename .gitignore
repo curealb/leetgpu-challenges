@@ -63,6 +63,7 @@ vcpkg_installed/
 
 # env
 env/
+.venv/
 
 # python
 **/__pycache__/
