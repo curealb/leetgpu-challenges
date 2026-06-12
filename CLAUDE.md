@@ -159,15 +159,9 @@ This fork does not submit solutions to a remote service. Validate solutions with
 the local judge only:
 
 ```bash
-python scripts/judge.py 52 cuda --quick --use-starter
-python scripts/judge.py 52 triton --quick --use-starter
-python scripts/judge.py 52 torch --quick --use-starter
-```
-
-Keep personal solutions under `solutions/` and pass them with `--solution`:
-
-```bash
-python scripts/local_judge.py challenges/easy/52_silu --language cuda --solution solutions/52_silu/solution.cu
+python scripts/local_judge.py 52 cuda --quick
+python scripts/local_judge.py 52 triton --quick
+python scripts/local_judge.py 52 torch --quick
 ```
 
 ## Checklist

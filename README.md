@@ -28,33 +28,25 @@ conda activate leetgpu
 ```
 
 Quickly judge one challenge by number. `--quick` runs `example,functional`
-instead of `example,functional,performance`, and `--use-starter` runs the
-starter template:
+instead of `example,functional,performance`. By default, local judging runs the
+challenge starter file (`starter.cu`, `starter.triton.py`, or `starter.pytorch.py`):
 
 ```bash
-python scripts/judge.py 52 torch --quick --use-starter
-python scripts/judge.py 52 triton --quick --use-starter
-python scripts/judge.py 52 cuda --quick --use-starter
-```
-
-Judge your own solution file:
-
-```bash
-python scripts/local_judge.py challenges/easy/52_silu --language torch --solution path/to/solution.py
-python scripts/local_judge.py challenges/easy/52_silu --language triton --solution path/to/solution.triton.py
-python scripts/local_judge.py challenges/easy/52_silu --language cuda --solution path/to/solution.cu
+python scripts/local_judge.py 52 torch --quick
+python scripts/local_judge.py 52 triton --quick
+python scripts/local_judge.py 52 cuda --quick
 ```
 
 Run every challenge against starter files for all locally supported languages:
 
 ```bash
-python scripts/local_judge.py --all --language all --use-starter --keep-going
+python scripts/local_judge.py --all --language all --keep-going
 ```
 
 Use `--overwrite` when you want a fresh results file instead of appending:
 
 ```bash
-python scripts/judge.py 52 torch --quick --use-starter --overwrite
+python scripts/local_judge.py 52 torch --quick --overwrite
 ```
 
 By default, results are appended to `local_judge_results.jsonl`, with code
@@ -89,9 +81,6 @@ python scripts/sync_challenges.py --dry-run
 
 The sync keeps the upstream problem definitions and automatically prunes starter
 files outside CUDA, Triton, and PyTorch.
-
-Keep personal solutions under `solutions/` instead of under `challenges/` to
-avoid conflicts during upstream syncs.
 
 Start the local results dashboard:
 

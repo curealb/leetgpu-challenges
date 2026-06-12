@@ -92,8 +92,8 @@ The CI checks formatting for files that remain in this local fork.
 ## Local Workflow
 
 1. Add or sync challenges under `challenges/`
-2. Keep personal solutions under `solutions/`
-3. Validate locally with `scripts/judge.py` or `scripts/local_judge.py`
+2. Edit the relevant `starter/` file
+3. Validate locally with `scripts/local_judge.py`
 4. Use `scripts/local_dashboard.py` to inspect local results
 
 ## Getting Help
