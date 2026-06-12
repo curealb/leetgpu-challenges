@@ -1,6 +1,11 @@
 #include <cuda_runtime.h>
 
-__global__ void vector_add(const float* A, const float* B, float* C, int N) {}
+__global__ void vector_add(const float* A, const float* B, float* C, int N) {
+    int idx = threadIdx.x + blockDim.x * blockIdx.x;
+    if (idx < N) {
+        C[idx] = A[idx] + B[idx];
+    }
+}
 
 // A, B, C are device pointers (i.e. pointers to memory on the GPU)
 extern "C" void solve(const float* A, const float* B, float* C, int N) {

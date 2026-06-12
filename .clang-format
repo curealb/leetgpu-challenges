@@ -1,13 +1,13 @@
----
-# Based on LLVM style with modifications for CUDA code
-BasedOnStyle: LLVM
-IndentWidth: 4
-ColumnLimit: 100
+BasedOnStyle: Google
+IndentWidth: 2
+ContinuationIndentWidth: 4
+ColumnLimit: 80
 PointerAlignment: Left
+DerivePointerAlignment: false
 AlignAfterOpenBracket: Align
-AllowShortFunctionsOnASingleLine: Empty
-AllowShortIfStatementsOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: Inline
+AllowShortIfStatementsOnASingleLine: WithoutElse
 AllowShortLoopsOnASingleLine: false
+BinPackParameters: true
+BinPackArguments: true
 BreakBeforeBraces: Attach
-IndentCaseLabels: false
-SpaceBeforeParens: ControlStatements
