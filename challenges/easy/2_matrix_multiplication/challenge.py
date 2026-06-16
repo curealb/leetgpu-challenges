@@ -15,9 +15,9 @@ class Challenge(ChallengeBase):
     def reference_impl(
         self, A: torch.Tensor, B: torch.Tensor, C: torch.Tensor, M: int, N: int, K: int
     ):
-        assert A.shape == (M, N)
-        assert B.shape == (N, K)
-        assert C.shape == (M, K)
+        assert A.shape == (M, K)
+        assert B.shape == (K, N)
+        assert C.shape == (M, N)
         assert A.dtype == B.dtype == C.dtype
         assert A.device == B.device == C.device
 
@@ -43,7 +43,7 @@ class Challenge(ChallengeBase):
         M, N, K = 2, 2, 2
         A = torch.tensor([[1.0, 2.0], [3.0, 4.0]], device=self.device, dtype=dtype)
         B = torch.tensor([[5.0, 6.0], [7.0, 8.0]], device=self.device, dtype=dtype)
-        C = torch.empty(M, K, device=self.device, dtype=dtype)
+        C = torch.empty(M, N, device=self.device, dtype=dtype)
         return {
             "A": A,
             "B": B,
@@ -58,7 +58,7 @@ class Challenge(ChallengeBase):
         test_specs = [
             # Basic test cases
             ("basic_2x2", 2, 2, 2, [[1.0, 2.0], [3.0, 4.0]], [[5.0, 6.0], [7.0, 8.0]]),
-            ("basic_1x3_3x1", 1, 3, 1, [[1.0, 2.0, 3.0]], [[4.0], [5.0], [6.0]]),
+            ("basic_1x3_3x1", 1, 1, 3, [[1.0, 2.0, 3.0]], [[4.0], [5.0], [6.0]]),
             (
                 "identity_matrix",
                 3,
@@ -71,8 +71,8 @@ class Challenge(ChallengeBase):
             (
                 "rectangular_matrices",
                 2,
-                3,
                 1,
+                3,
                 [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]],
                 [[1.0], [2.0], [3.0]],
             ),
@@ -84,7 +84,7 @@ class Challenge(ChallengeBase):
                 {
                     "A": torch.tensor(a_vals, device=self.device, dtype=dtype),
                     "B": torch.tensor(b_vals, device=self.device, dtype=dtype),
-                    "C": torch.empty(m, k, device=self.device, dtype=dtype),
+                    "C": torch.empty(m, n, device=self.device, dtype=dtype),
                     "M": m,
                     "N": n,
                     "K": k,
@@ -101,9 +101,9 @@ class Challenge(ChallengeBase):
         ]:
             test_cases.append(
                 {
-                    "A": torch.empty(m, n, device=self.device, dtype=dtype).uniform_(-10.0, 10.0),
-                    "B": torch.empty(n, k, device=self.device, dtype=dtype).uniform_(-10.0, 10.0),
-                    "C": torch.empty(m, k, device=self.device, dtype=dtype),
+                    "A": torch.empty(m, k, device=self.device, dtype=dtype).uniform_(-10.0, 10.0),
+                    "B": torch.empty(k, n, device=self.device, dtype=dtype).uniform_(-10.0, 10.0),
+                    "C": torch.empty(m, n, device=self.device, dtype=dtype),
                     "M": m,
                     "N": n,
                     "K": k,
@@ -114,14 +114,14 @@ class Challenge(ChallengeBase):
         for _, m, n, k in [
             ("single_element", 1, 1, 1),
             ("single_row", 1, 5, 3),
-            ("single_column", 5, 3, 1),
+            ("single_column", 5, 1, 3),
             ("max_dimensions", 8192, 6144, 4096),
         ]:
             test_cases.append(
                 {
-                    "A": torch.empty(m, n, device=self.device, dtype=dtype).uniform_(-1.0, 1.0),
-                    "B": torch.empty(n, k, device=self.device, dtype=dtype).uniform_(-1.0, 1.0),
-                    "C": torch.empty(m, k, device=self.device, dtype=dtype),
+                    "A": torch.empty(m, k, device=self.device, dtype=dtype).uniform_(-1.0, 1.0),
+                    "B": torch.empty(k, n, device=self.device, dtype=dtype).uniform_(-1.0, 1.0),
+                    "C": torch.empty(m, n, device=self.device, dtype=dtype),
                     "M": m,
                     "N": n,
                     "K": k,
@@ -133,9 +133,9 @@ class Challenge(ChallengeBase):
     def generate_performance_test(self) -> Dict[str, Any]:
         M, N, K = 8192, 6144, 4096
         return {
-            "A": RandTensor((M, N), -10.0, 10.0),
-            "B": RandTensor((N, K), -10.0, 10.0),
-            "C": OutTensor((M, K)),
+            "A": RandTensor((M, K), -10.0, 10.0),
+            "B": RandTensor((K, N), -10.0, 10.0),
+            "C": OutTensor((M, N)),
             "M": M,
             "N": N,
             "K": K,
