@@ -102,20 +102,47 @@ files outside CUDA, Triton, and PyTorch.
 Use `main` only for syncing upstream challenge updates, and use `solution` for
 personal solutions, local judging, and solution commits.
 
+Before syncing, make sure any solution work is committed on `solution`:
+
+```bash
+git switch solution
+git status
+git add .
+git commit -m "save current solutions"
+git push origin solution
+```
+
+If `git status` is clean, there is nothing to commit.
+
 Sync upstream challenges into `main`:
 
 ```bash
 git switch main
-git fetch upstream
-git merge --ff-only upstream/main
+python scripts/sync_challenges.py
+git add challenges
+git commit -m "Sync challenges from upstream"
 git push origin main
 ```
 
-Bring the latest challenges into `solution` before solving:
+Bring the latest challenges into `solution` while keeping your committed
+solutions:
 
 ```bash
 git switch solution
 git rebase main
+```
+
+If there are conflicts, keep the new `main` version for problem definitions such
+as `challenge.py`, `challenge.html`, and tests. Keep your `solution` version for
+answered starter files such as `starter/starter.cu`, `starter.triton.py`, and
+`starter.pytorch.py`, then adjust the answer if the upstream signature or tests
+changed.
+
+After resolving each conflict:
+
+```bash
+git add <conflict-file>
+git rebase --continue
 ```
 
 If you prefer merge commits over rebasing, use this instead:
