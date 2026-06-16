@@ -4,9 +4,9 @@ __global__ void silu_kernel(const float* input, float* output, int N) {}
 
 // input, output are device pointers
 extern "C" void solve(const float* input, float* output, int N) {
-    int threadsPerBlock = 256;
-    int blocksPerGrid = (N + threadsPerBlock - 1) / threadsPerBlock;
+  int threadsPerBlock = 256;
+  int blocksPerGrid = (N + threadsPerBlock - 1) / threadsPerBlock;
 
-    silu_kernel<<<blocksPerGrid, threadsPerBlock>>>(input, output, N);
-    cudaDeviceSynchronize();
+  silu_kernel<<<blocksPerGrid, threadsPerBlock>>>(input, output, N);
+  cudaDeviceSynchronize();
 }
