@@ -229,10 +229,11 @@ extern "C" void solve(const float* A, const float* B, float* C, int M, int N,
                       int K) {
   dim3 threadsPerBlock(BLOCK_SIZE_X, BLOCK_SIZE_Y);
 
-  dim3 blocksPerGrid((N + BLOCK_N - 1) / BLOCK_N, (M + BLOCK_M - 1) / BLOCK_M);
+  // The challenge uses A[M, N] @ B[N, K]; the kernel uses N for output columns.
+  dim3 blocksPerGrid((K + BLOCK_N - 1) / BLOCK_N, (M + BLOCK_M - 1) / BLOCK_M);
 
   matrix_multiplication_kernel<<<blocksPerGrid, threadsPerBlock>>>(A, B, C, M,
-                                                                   N, K);
+                                                                   K, N);
 
   cudaDeviceSynchronize();
 }

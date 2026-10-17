@@ -12,6 +12,8 @@ def matrix_multiplication_kernel(
 
 
 def solve(a: torch.Tensor, b: torch.Tensor, c: torch.Tensor, M: int, N: int, K: int):
+    # Map challenge dimensions A[M, N] @ B[N, K] to the kernel convention.
+    N, K = K, N
     stride_am, stride_ak = K, 1
     stride_bk, stride_bn = N, 1
     stride_cm, stride_cn = N, 1
