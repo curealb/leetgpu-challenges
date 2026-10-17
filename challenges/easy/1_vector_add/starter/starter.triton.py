@@ -4,7 +4,7 @@ import triton.language as tl
 
 
 @triton.jit
-def vector_add_kernel(a_ptr, b_ptr, c_ptr, n_elements, BLOCK_SIZE: tl.constexpr):
+def vector_add_kernel(a, b, c, n_elements, BLOCK_SIZE: tl.constexpr):
     pass
 
 
